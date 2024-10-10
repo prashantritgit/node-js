@@ -1,0 +1,51 @@
+---
+- name: Deploy Node.js Application on Nginx
+  hosts: nginx_server
+  become: yes
+  tasks:
+    - name: Install Docker if not already installed
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Ensure Nginx is installed
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+
+    - name: Start and enable Nginx
+      systemd:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Configure Nginx to proxy requests
+      copy:
+        src: nginx_conf.conf
+        dest: /etc/nginx/sites-available/default
+        owner: root
+        group: root
+        mode: '0644'
+      notify:
+        - Restart Nginx
+
+    - name: Pull Node.js Docker image
+      docker_image:
+        name: your_nodejs_image_name  # Replace with your actual image name
+        pull: yes
+
+    - name: Run Node.js Docker container
+      docker_container:
+        name: nodejs_app
+        image: your_nodejs_image_name  # Replace with your actual image name
+        state: started
+        published_ports:
+          - "3000:3000"  # Change if your app uses a different port
+
+  handlers:
+    - name: Restart Nginx
+      systemd:
+        name: nginx
+        state: restarted

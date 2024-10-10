@@ -95,6 +95,6 @@ resource "aws_instance" "webserver" {
   associate_public_ip_address = true
 
   tags = {
-    Name = "webserver-instance"
+    Name = "webserver"
   }
 }
