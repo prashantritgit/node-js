@@ -24,7 +24,7 @@
     - name: Configure Nginx to proxy requests
       copy:
         src: nginx.conf
-        dest: /etc/nginx/sites-available/default
+        dest: /etc/nginx/
         owner: root
         group: root
         mode: '0644'
